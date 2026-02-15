@@ -53,8 +53,8 @@ public class FetchLeaderboardService {
             Map<String, Object> requestBody = new HashMap<>();
 
             requestBody.put("StatisticName", "LP");
-            requestBody.put("StartPosition", 0);
-            requestBody.put("MaxResultsCount", 21);
+            requestBody.put("StartPosition", 1);
+            requestBody.put("MaxResultsCount", 20);
 
             // 🔥 IMPORTANT: INCLUDE PROFILE DATA
             requestBody.put("ProfileConstraints", Map.of(
@@ -137,4 +137,6 @@ public class FetchLeaderboardService {
             e.printStackTrace();
         }
     }
+
+
 }

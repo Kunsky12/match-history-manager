@@ -11,8 +11,8 @@ import java.util.List;
 
 public interface MatchRecordRepository extends JpaRepository<MatchRecord, Long> {
 
-    // Get top 20 latest matches
-    List<MatchRecord> findTop20ByPlayfabIdOrderByCreatedAtDesc(String playfabId);
+    // Correct method name
+    List<MatchRecord> findAllByPlayfabId(String playfabId);
 
     // Trim excess matches (keep only 20)
     @Modifying

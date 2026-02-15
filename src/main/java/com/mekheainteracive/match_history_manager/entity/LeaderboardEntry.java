@@ -7,7 +7,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "leaderboard_entry")
+@Table(name = "Top_20_Leaderboard")
 public class LeaderboardEntry {
 
     @Id

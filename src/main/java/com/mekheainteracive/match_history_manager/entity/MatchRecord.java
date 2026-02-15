@@ -10,14 +10,14 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "match_records")
+@Table(name = "Match_Records")
 public class MatchRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "playfab_id", nullable = false)
+    @Column(name = "playfab_Id", nullable = false)
     private String playfabId;
 
     private Integer selectedFighter;
