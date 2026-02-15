@@ -1,8 +1,12 @@
 package com.mekheainteracive.match_history_manager.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "leaderboard_entry")
 public class LeaderboardEntry {
 
@@ -20,6 +24,10 @@ public class LeaderboardEntry {
 
     @Column(nullable = false)
     private int position;
+
+    @Column
+    private String facebookId;
+    private String countryCode;
 
     // getters & setters
 }
