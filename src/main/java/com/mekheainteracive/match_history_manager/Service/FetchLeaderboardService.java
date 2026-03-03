@@ -1,10 +1,12 @@
-package com.mekheainteracive.match_history_manager.service;
+package com.mekheainteracive.match_history_manager.Service;
 
-import com.mekheainteracive.match_history_manager.entity.LeaderboardEntry;
-import com.mekheainteracive.match_history_manager.repository.LeaderboardRepository;
+import com.mekheainteracive.match_history_manager.Entity.Leaderboard_Entry;
+import com.mekheainteracive.match_history_manager.Repository.LeaderboardRepo;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,9 +21,9 @@ import java.util.*;
 public class FetchLeaderboardService {
 
     private final RestClient restClient = RestClient.create();
-    private final LeaderboardRepository repository;
+    private final LeaderboardRepo repository;
 
-    public FetchLeaderboardService(LeaderboardRepository repository) {
+    public FetchLeaderboardService(LeaderboardRepo repository) {
         this.repository = repository;
     }
 
@@ -32,7 +34,7 @@ public class FetchLeaderboardService {
     private String secretKey;
 
     @Getter
-    private List<LeaderboardEntry> latestLeaderboard = new ArrayList<>();
+    private List<Leaderboard_Entry> latestLeaderboard = new ArrayList<>();
 
     // ✅ RUN ON STARTUP
     @EventListener(ApplicationReadyEvent.class)
@@ -44,6 +46,7 @@ public class FetchLeaderboardService {
     // ✅ RUN EVERY MONDAY 8 AM (CAMBODIA TIME)
     @Transactional
     @Scheduled(cron = "0 0 8 ? * MON", zone = "Asia/Phnom_Penh")
+    @CacheEvict(value = "leaderboard", key = "'global'")
     public void fetchWeeklyLeaderboardAutomatically() {
 
         System.out.println("🔥 Fetching leaderboard at: " + LocalDateTime.now());
@@ -56,7 +59,7 @@ public class FetchLeaderboardService {
             requestBody.put("StartPosition", 1);
             requestBody.put("MaxResultsCount", 20);
 
-            // 🔥 IMPORTANT: INCLUDE PROFILE DATA
+            // IMPORTANT: DATA CONSTRAINT
             requestBody.put("ProfileConstraints", Map.of(
                     "ShowDisplayName", true,
                     "ShowAvatarUrl", true,
@@ -64,7 +67,7 @@ public class FetchLeaderboardService {
             ));
 
             // ✅ CALL PLAYFAB
-            Map<String, Object> response = restClient.post()
+            Map response = restClient.post()
                     .uri("https://" + titleId + ".playfabapi.com/Server/GetLeaderboard")
                     .header("X-SecretKey", secretKey)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -74,15 +77,14 @@ public class FetchLeaderboardService {
 
             Map<String, Object> data = (Map<String, Object>) response.get("data");
 
-            List<Map<String, Object>> leaderboardList =
-                    (List<Map<String, Object>>) data.get("Leaderboard");
+            List<Map<String, Object>> leaderboardList = (List<Map<String, Object>>) data.get("Leaderboard");
 
             if (leaderboardList == null || leaderboardList.isEmpty()) {
                 System.out.println("❌ Leaderboard empty");
                 return;
             }
 
-            List<LeaderboardEntry> entities = new ArrayList<>();
+            List<Leaderboard_Entry> entities = new ArrayList<>();
 
             for (Map<String, Object> entry : leaderboardList) {
 
@@ -92,8 +94,7 @@ public class FetchLeaderboardService {
                 Number position = (Number) entry.get("Position");
 
                 // PROFILE DATA
-                Map<String, Object> profile =
-                        (Map<String, Object>) entry.get("Profile");
+                Map<String, Object> profile = (Map<String, Object>) entry.get("Profile");
 
                 String displayName = "Unknown";
                 String avatarUrl = "";
@@ -112,7 +113,7 @@ public class FetchLeaderboardService {
                     }
                 }
 
-                LeaderboardEntry lb = new LeaderboardEntry();
+                Leaderboard_Entry lb = new Leaderboard_Entry();
 
                 lb.setPlayfabId(playFabId);
                 lb.setDisplayName(displayName);
@@ -138,5 +139,9 @@ public class FetchLeaderboardService {
         }
     }
 
-
+    @Cacheable(value = "leaderboard", key = "'global'")
+    public List<Leaderboard_Entry> getLeaderboard() {
+        System.out.println("Fetching from DB...");
+        return repository.findAllByOrderByPositionAsc();
+    }
 }

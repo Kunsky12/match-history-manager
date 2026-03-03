@@ -1,4 +1,4 @@
-package com.mekheainteracive.match_history_manager.entity;
+package com.mekheainteracive.match_history_manager.Entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "Match_Records")
-public class MatchRecord {
+public class MatchHistory_Entry {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

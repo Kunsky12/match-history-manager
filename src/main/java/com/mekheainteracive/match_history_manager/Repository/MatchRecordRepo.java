@@ -1,18 +1,16 @@
-package com.mekheainteracive.match_history_manager.repository;
+package com.mekheainteracive.match_history_manager.Repository;
 
+import com.mekheainteracive.match_history_manager.Entity.MatchHistory_Entry;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.mekheainteracive.match_history_manager.entity.MatchRecord;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface MatchRecordRepository extends JpaRepository<MatchRecord, Long> {
-
-    // Correct method name
-    List<MatchRecord> findAllByPlayfabId(String playfabId);
+public interface MatchRecordRepo extends JpaRepository<MatchHistory_Entry, Long> {
+    List<MatchHistory_Entry> findAllByPlayfabId(String playfabId);
 
     // Trim excess matches (keep only 20)
     @Modifying

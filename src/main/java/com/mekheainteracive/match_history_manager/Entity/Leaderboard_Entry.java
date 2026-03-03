@@ -1,4 +1,4 @@
-package com.mekheainteracive.match_history_manager.entity;
+package com.mekheainteracive.match_history_manager.Entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "Top_20_Leaderboard")
-public class LeaderboardEntry {
+public class Leaderboard_Entry {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +28,4 @@ public class LeaderboardEntry {
     @Column
     private String facebookId;
     private String countryCode;
-
-    // getters & setters
 }
