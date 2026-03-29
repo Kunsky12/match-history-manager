@@ -46,7 +46,7 @@ public class FetchLeaderboardService {
 
     @EventListener(ApplicationReadyEvent.class)
     public void init() {
-        System.out.println("🚀 Fetch leaderboard on startup...");
+        System.out.println("ℹ️ Fetch leaderboard on startup...");
         fetchWeeklyLeaderboardAutomatically();
     }
 
@@ -55,8 +55,8 @@ public class FetchLeaderboardService {
     public void fetchWeeklyLeaderboardAutomatically() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime nextRun = now.plusHours(1);
-        System.out.println("🔥 Fetching leaderboard at: " + LocalDateTime.now());
-        System.out.println("⏰ Next leaderboard fetch scheduled at: " + nextRun);
+        System.out.println("ℹ️ Fetching leaderboard at: " + LocalDateTime.now());
+        System.out.println("ℹ️ Next leaderboard fetch scheduled at: " + nextRun);
 
         try {
             Map<String, Object> requestBody = new HashMap<>();
@@ -116,7 +116,7 @@ public class FetchLeaderboardService {
 
             latestLeaderboard = entities;
             System.out.println("✅ Leaderboard saved to DB and Redis");
-            //System.out.println("⏰ Next leaderboard fetch scheduled at: " + LocalDateTime.now().plusHours(1));
+            //System.out.println("ℹ️ Next leaderboard fetch scheduled at: " + LocalDateTime.now().plusHours(1));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -127,11 +127,11 @@ public class FetchLeaderboardService {
         try {
             String cached = jedis.get(REDIS_KEY);
             if (cached != null) {
-                System.out.println("🔥 Leaderboard from Redis");
+                System.out.println("ℹ️ Leaderboard from Redis");
                 return objectMapper.readValue(cached, new TypeReference<>() {});
             }
 
-            System.out.println("🐢 Redis empty, fallback to DB");
+            System.out.println("⚠️ Redis empty, fallback to DB");
             List<Leaderboard_Entry> leaderboard = repository.findAllByOrderByPositionAsc();
 
             // Rebuild Redis cache
